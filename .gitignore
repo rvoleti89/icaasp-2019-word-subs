@@ -102,3 +102,16 @@ bin/
 
 # exclude external models from source control
 /src/external/
+
+# exclude dolphin files
+.directory
+
+# exclude pdf and csv
+*.csv
+*.pdf
+
+# exclude large pickle
+notebooks/ICAASP\ 2019\ Paper\ -\ ASR\ Errors/glove_hayes_all.pkl
+notebooks/ICAASP\ 2019\ Paper\ -\ ASR\ Errors/encoder/infersent1.pkl
+notebooks/ICAASP\ 2019\ Paper\ -\ ASR\ Errors/encoder/infersent2.pkl
+
