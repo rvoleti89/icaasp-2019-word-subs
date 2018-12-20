@@ -111,8 +111,6 @@ bin/
 *.pdf
 *.pkl
 
-# exclude large pickle
-notebooks/ICAASP\ 2019\ Paper\ -\ ASR\ Errors/glove_hayes_all.pkl
-notebooks/ICAASP\ 2019\ Paper\ -\ ASR\ Errors/encoder/infersent1.pkl
-notebooks/ICAASP\ 2019\ Paper\ -\ ASR\ Errors/encoder/infersent2.pkl
-
+# exclude glove vectors model
+/src/models/glove
+/src/models/glove.vectors.npy

@@ -17,27 +17,29 @@ def load_glove_model(path):
         os.makedirs(path)
         print(f'Creating directory for glove model at {path}')
 
-    if not Path(os.path.join(path, 'glove')).is_file():
-        print(f'Downloading pre-trained GloVe Vectors (840B 300d vectors trained on Common Crawl) to {path}')
-        zip_file = wget.download(url, os.path.join(path, 'glove.840B.300d.zip'))
+    gensim_model_path = '../models/glove'
+    gensim_model_abspath = os.path.abspath(gensim_model_path)
+    if not Path(gensim_model_path).is_file():
+        if not Path(os.path.join(path, 'glove.840B.300d.txt')).is_file():
+            print(f'Downloading pre-trained GloVe Vectors (840B 300d vectors trained on Common Crawl) to {path}')
+            zip_file = wget.download(url, os.path.join(path, 'glove.840B.300d.zip'))
 
-        print(f'Unzipping {zip_file}')
-        with zipfile.ZipFile(zip_file, 'r') as zip_ref:
-            zip_ref.extractall(path)
+            print(f'Unzipping {zip_file}')
+            with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+                zip_ref.extractall(path)
 
-        print(f'Deleting {zip_file}')
-        os.remove(zip_file)
-        gensim_model_path = os.path.join(path, 'glove')
-        print(f'Generating glove gensim model and saving to {gensim_model_path}, this may take several minutes.')
+            print(f'Deleting {zip_file}')
+            os.remove(zip_file)
+        print(f'Generating and saving GloVe gensim model at {gensim_model_abspath}, this may take several minutes.')
         tmp_file = "/tmp/glove.840B.300d.w2v.txt"
         glove2word2vec(os.path.join(path, 'glove.840B.300d.txt'), tmp_file)
         glove = gensim.models.KeyedVectors.load_word2vec_format(tmp_file)
-        glove.save(os.path.join(path, 'glove'))
+        glove.save(gensim_model_path)
+        print(f'Loading GloVe vector gensim model from {gensim_model_abspath}.')
         os.remove(tmp_file)
-        os.remove(os.path.join(path, 'glove.840B.300d.txt'))
     else:
-        print('GloVe gensim KeyedVectors model exists! Loading model.')
-        glove = gensim.models.KeyedVectors.load(os.path.join(path, 'glove'))
+        print(f'GloVe gensim KeyedVectors model exists! Loading model from {gensim_model_abspath}.')
+        glove = gensim.models.KeyedVectors.load(gensim_model_path)
     return glove
 
 
