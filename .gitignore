@@ -106,9 +106,10 @@ bin/
 # exclude dolphin files
 .directory
 
-# exclude pdf and csv
+# exclude pdf, csv, pkl
 *.csv
 *.pdf
+*.pkl
 
 # exclude large pickle
 notebooks/ICAASP\ 2019\ Paper\ -\ ASR\ Errors/glove_hayes_all.pkl
