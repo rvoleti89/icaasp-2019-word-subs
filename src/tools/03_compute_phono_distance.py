@@ -114,7 +114,8 @@ if __name__ == '__main__':
     with open('../models/dict.pkl', 'rb') as f:
         cmu_dict, arpabet2hayes = pickle.load(f)
 
-    test_corpus = "The quick brown fox jumped over the lazy dogs in Syria."
+    test_corpus = "The quick brown fox jumped over the lazy dogs in Syria. " \
+                  "Cheesecake is the best dessert in the world as we know it, but not ice cream."
 
     if not Path('../models/glove_hayes_all_test.pkl').is_file():
         distances = find_distances(test_corpus, cmu_dict, arpabet2hayes, model=glove, use_stoplist=False)
@@ -135,4 +136,4 @@ if __name__ == '__main__':
         pickle.dump(probs, f)
 
     print('Word of interest: "fox"')
-    print(probs.loc['fox'])
+    print(probs.loc['Cheesecake'])

@@ -3,6 +3,8 @@ import pickle
 import numpy as np
 import importlib
 
+phono_module = importlib.import_module('.tools.03_compute_phono_distance', 'src')
+Sentence = phono_module.Sentence
 
 def identify_subs(tokens, error_rate):
     x = {word: np.random.rand() for word in tokens}
@@ -21,7 +23,9 @@ def pick_similar_word(prob_df):
 
 
 def replace_error_words(probs_df, sentence, error_rate):
-    tokens = sentence.tokens_cased
+    sentence_class = Sentence(sentence)
+
+    tokens = sentence_class.tokens_cased
 
     words_to_replace = identify_subs(tokens, error_rate=error_rate)
 
@@ -32,25 +36,23 @@ def replace_error_words(probs_df, sentence, error_rate):
     sim_words_dict = probs_group.apply(pick_similar_word).to_dict()
 
     for k, v in list(sim_words_dict.items()):
-        sentence.tokens_cased = [re.sub(r"\b" + k + r"\b", v, w) for w in sentence.tokens_cased]
+        sentence_class.tokens_cased = [re.sub(r"\b" + k + r"\b", v, w) for w in sentence_class.tokens_cased]
 
-    sentence.tokens = [w.lower() for w in sentence.tokens_cased]
-    sentence.tokens_without_stop = [w for w in sentence.tokens if w not in STOP]
-    sentence.tokens_cased_without_stop = [w for w in sentence.tokens_cased if w not in STOP]
+    sentence_class.tokens = [w.lower() for w in sentence_class.tokens_cased]
+    sentence_class.tokens_without_stop = [w for w in sentence_class.tokens if w not in STOP]
+    sentence_class.tokens_cased_without_stop = [w for w in sentence_class.tokens_cased if w not in STOP]
 
-    sentence.raw = " ".join(sentence.tokens_cased)
+    sentence_class.raw = " ".join(sentence_class.tokens_cased)
 
-    return sentence.raw
+    return sentence_class.raw
 
 
 if __name__ == '__main__':
-    sample_sentence = 'The quick brown fox jumped over the lazy dogs in Syria.'
-    wer = 0.30
-    phono_module = importlib.import_module('.tools.03_compute_phono_distance', 'src')
-    sample_sentence_class = phono_module.Sentence(sample_sentence)
+    sample_sentence = 'ice cream is the best dessert in the world as we know it.'
+    wer = 0.50
     STOP = phono_module.STOP
 
     with open('../models/test_probs_df.pkl', 'rb') as f:
         probs = pickle.load(f)
 
-    print(replace_error_words(probs, sample_sentence_class, error_rate=wer))
+    print(replace_error_words(probs, sample_sentence, error_rate=wer))

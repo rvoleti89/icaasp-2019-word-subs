@@ -7,9 +7,10 @@ import zipfile
 from gensim.scripts.glove2word2vec import glove2word2vec
 
 
-def load_glove_model(path):
+def load_glove_model(path, gensim_model_path='../models/glove'):
     """
     :param path: folder to which to download GloVe model from Stanford NLP
+    :param gensim_model_path: path which contains gensim model for pre-trained GloVe vectors
     :return: glove gensim KeyedVectors model
     """
     url = 'http://nlp.stanford.edu/data/glove.840B.300d.zip'
@@ -17,7 +18,6 @@ def load_glove_model(path):
         os.makedirs(path)
         print(f'Creating directory for glove model at {path}')
 
-    gensim_model_path = '../models/glove'
     gensim_model_abspath = os.path.abspath(gensim_model_path)
     if not Path(gensim_model_path).is_file():
         if not Path(os.path.join(path, 'glove.840B.300d.txt')).is_file():
