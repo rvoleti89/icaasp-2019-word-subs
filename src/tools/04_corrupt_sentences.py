@@ -5,6 +5,8 @@ import importlib
 
 phono_module = importlib.import_module('.tools.03_compute_phono_distance', 'src')
 Sentence = phono_module.Sentence
+STOP = phono_module.STOP
+
 
 def identify_subs(tokens, error_rate):
     x = {word: np.random.rand() for word in tokens}
@@ -50,8 +52,6 @@ def replace_error_words(probs_df, sentence, error_rate):
 if __name__ == '__main__':
     sample_sentence = 'ice cream is the best dessert in the world as we know it.'
     wer = 0.50
-    STOP = phono_module.STOP
-
     with open('../models/test_probs_df.pkl', 'rb') as f:
         probs = pickle.load(f)
 
