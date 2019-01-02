@@ -6,6 +6,7 @@ import importlib
 import os
 from corpustools.symbolsim import phono_edit_distance
 from pathlib import Path
+import progressbar
 
 # Global variables
 STOP = set(nltk.corpus.stopwords.words("english"))
@@ -51,7 +52,13 @@ def find_distances(corpus, phono_dict, features, model, use_stoplist=False, n=10
     distances = []
     word_tuples = []
 
-    for token in set_of_unique_tokens:
+    widgets = [progressbar.Percentage(), ' ', progressbar.Bar(marker='#', left='[', right=']'),
+               ' ', progressbar.ETA(), ' ', progressbar.Counter(format='%(value)d / %(max_value)d')]
+
+    pbar = progressbar.ProgressBar(widgets=widgets, maxval=len(set_of_unique_tokens))
+    pbar.start()
+
+    for i, token in enumerate(set_of_unique_tokens):
         similar_set = model.most_similar(token, topn=n)
 
         # Only keep words and filter
@@ -68,6 +75,9 @@ def find_distances(corpus, phono_dict, features, model, use_stoplist=False, n=10
                                                                )
             word_tuples.append((token, sim_word))
             distances.append(distance)
+
+        pbar.update(i)
+    pbar.finish()
 
     index = pd.MultiIndex.from_tuples(tuples=word_tuples, names=['Corpus Word', 'Similar Word from Model'])
     columns = ['Phono Edit Distance']

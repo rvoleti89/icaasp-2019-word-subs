@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-import pickle
 import gensim
 import wget
 import zipfile

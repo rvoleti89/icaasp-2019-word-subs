@@ -16,8 +16,11 @@ corrupt_sentences = importlib.import_module('.tools.04_corrupt_sentences', 'src'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
+
     parser.add_argument('-f', dest='text_file', type=str, help='Path to text file containing '
                                                                'all sentences to be corrupted')
+    parser.add_argument('-o', dest='output_loc', default=None, type=str,
+                        help='Path to directory for corrupted output text file')
     parser.add_argument('-e', dest='wer', default=0.30, type=float, help='Word Error Rate (WER) for desired output')
     parser.add_argument('--redo', dest='redo', default=False, type=bool, help='Set to "True" if you want to overwrite'
                                                                               'the pickle file for the confusion'
@@ -31,8 +34,11 @@ if __name__ == '__main__':
                                                                                          'does not exist.')
 
     args = parser.parse_args()
-
     corpus_file = os.path.expanduser(args.text_file)
+    if args.output_loc is not None:
+        output_dir = os.path.expanduser(args.output_loc)
+    else:
+        output_dir = os.path.dirname(corpus_file)
     corpus_file_no_ext = corpus_file.split('/')[-1].split('.')[0]
     wer = args.wer
     redo = args.redo
@@ -40,7 +46,7 @@ if __name__ == '__main__':
 
     # Read file into variable
     with open(corpus_file, 'r') as f:
-        corpus = f.read()
+        corpus = f.readlines()
 
     # Indicate directory where models are stored
     models_path = src.models.__path__[0]
@@ -92,11 +98,16 @@ if __name__ == '__main__':
             num_words = len(cmu_dict)
             print(f'Loaded CMU Pronouncing Dictionary with ARPABET transcriptions for {num_words} English words '
                   f'and feature matrix by Hayes.')
-            distances = load_probs.find_distances(corpus, cmu_dict, arpabet2hayes, model=glove, use_stoplist=False)
-
+            print(f'Computing phonological edit distances for all similar words to unique words in {corpus_file}',
+                  '\nThis may take a while...')
+            distances = load_probs.find_distances(''.join(corpus), cmu_dict, arpabet2hayes, model=glove,
+                                                  use_stoplist=False)
+            print('Done!')
             # Save pickle for phono edit distances
-            with open(os.path.join(models_path, f'{corpus_file_no_ext}_glove_hayes_phono_dist.pkl'), 'wb') as f:
+            pkl_path = os.path.join(models_path, f'{corpus_file_no_ext}_glove_hayes_phono_dist.pkl')
+            with open(pkl_path, 'wb') as f:
                 pickle.dump(distances, f)
+            print(f'Pickle file saved at {pkl_path}')
 
         else:  # If phono distance pickle exists
             with open(os.path.join(models_path, f'{corpus_file_no_ext}_glove_hayes_phono_dist.pkl'), 'rb') as f:
@@ -106,17 +117,27 @@ if __name__ == '__main__':
         probs = distances_filtered.apply(load_probs.find_probabilities)
 
         # Save probability DataFrame pickle for word substitutions
-        with open(os.path.join(models_path, f'{corpus_file_no_ext}_word_substitution_df.pkl'), 'wb') as f:
+        word_pkl_path = os.path.join(models_path, f'{corpus_file_no_ext}_word_substitution_df.pkl')
+        with open(word_pkl_path, 'wb') as f:
             pickle.dump(probs, f)
+
+        print(f'Saved word substitution DataFrame pickle file at {word_pkl_path}.')
 
     # Else, if pickle for word substitution model exists for a corpus, simply load and use to corrupt the corpus
     else:
+        print(f'Loading word substitution DataFrame for {corpus_file}')
         with open(os.path.join(models_path, f'{corpus_file_no_ext}_word_substitution_df.pkl'), 'rb') as f:
             probs = pickle.load(f)
 
     # Compute corrupted corrupted corpus for given WER
-    corrupted_corpus = corrupt_sentences.replace_error_words(probs, corpus, error_rate=wer)
+    # corrupted_corpus = corrupt_sentences.replace_error_words(probs, corpus, error_rate=wer)
+    corrupted_corpus = []
+    for sent in corpus:
+        corrupted_corpus.append(corrupt_sentences.replace_error_words(probs, sent, error_rate=wer) + '\n')
 
     corrupted_file_with_ext = corpus_file.split('/')[-1]
-    with open(os.path.relpath(f'../data/processed/corrupted_{corrupted_file_with_ext}', start=src.__path__[0]), 'w') as f:
-        f.write(corrupted_corpus)
+    with open(os.path.join(output_dir, f'corrupted_{corrupted_file_with_ext}'), 'w') as f:
+        f.writelines(corrupted_corpus)
+
+    print(f'Corrupted {corpus_file} with a WER of {wer*100}% and saved the output as',
+          os.path.join(output_dir, f'corrupted_{corrupted_file_with_ext}'))
