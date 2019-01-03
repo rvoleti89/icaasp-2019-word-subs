@@ -18,18 +18,19 @@ def load_glove_model(path, gensim_model_path=os.path.expanduser('~/asr_simulator
         print(f'Creating directory for glove model at {path}')
 
     gensim_model_abspath = os.path.abspath(gensim_model_path)
-    if not Path(gensim_model_path).is_file():
+    if not Path(os.path.join(gensim_model_abspath, 'glove')).is_file():
         if not Path(os.path.join(path, 'glove.840B.300d.txt')).is_file():
             print(f'Downloading pre-trained GloVe Vectors (840B 300d vectors trained on Common Crawl) to {path}')
             zip_file = wget.download(url, os.path.join(path, 'glove.840B.300d.zip'))
 
-            print(f'Unzipping {zip_file}')
+            print(f'\nUnzipping {zip_file}')
             with zipfile.ZipFile(zip_file, 'r') as zip_ref:
                 zip_ref.extractall(path)
 
             print(f'Deleting {zip_file}')
             os.remove(zip_file)
-        print(f'Generating and saving GloVe gensim model at {gensim_model_abspath}/glove, this may take several minutes.')
+        print(f'Generating and saving GloVe gensim model to {gensim_model_abspath}/glove, '
+              f'this may take several minutes.')
         tmp_file = "/tmp/glove.840B.300d.w2v.txt"
         glove2word2vec(os.path.join(path, 'glove.840B.300d.txt'), tmp_file)
         glove = gensim.models.KeyedVectors.load_word2vec_format(tmp_file)
@@ -43,7 +44,7 @@ def load_glove_model(path, gensim_model_path=os.path.expanduser('~/asr_simulator
         os.remove(tmp_file)
     else:
         print(f'GloVe gensim KeyedVectors model exists! Loading model from {gensim_model_abspath}/glove.')
-        glove = gensim.models.KeyedVectors.load(gensim_model_path)
+        glove = gensim.models.KeyedVectors.load(os.path.join(gensim_model_abspath, 'glove'))
     return glove
 
 

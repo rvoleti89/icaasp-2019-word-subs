@@ -13,15 +13,15 @@ def read_cmu(f):
         tsv_reader = csv.reader(tsv, delimiter="\t", quoting=csv.QUOTE_NONE)
         for row in tsv_reader:
             spelling = row[0]
-            transcription = classes.lexicon.Transcription(row[1].split())
+            transcription = row[1].split()
+            # transcription = classes.lexicon.Transcription(row[1].split())
 
             try:
-                Word = classes.lexicon.Word(symbol=spelling)
+                word = classes.lexicon.Word(symbol=spelling, transcription=transcription)
             except:
                 continue
-
-            setattr(Word, 'transcription', transcription)
-            cmu_dict[spelling] = Word
+            # setattr(word, 'transcription', transcription)
+            cmu_dict[spelling] = word
     return cmu_dict
 
 
