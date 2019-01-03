@@ -60,7 +60,28 @@ Installing the package includes adding a python script titled *corrupt_text_file
   * `--glove`: Can optionally specify a directory which contains the GloVe vectors .txt file from Stanford NLP if already downloaded. File will be downloaded to asr_error_simulator data directory in home folder by default otherwise.
   
 ##### Usage example:
-
+The following example takes a text file (*text.txt*), corrupts it with a WER of 34.7%, and saves the output in the same directory (Desktop) as *corrupted_test.txt*. 
 ```bash
 corrupt_text_file.py -f ~/Desktop/test.txt -e 0.347
+```
+Output:
+```bash
+Creating directory for saving gensim model for GloVe vectors to /home/rohit/asr_simulator_data/models
+Creating directory for downloaded pre-trained GloVe vectors from Stanford NLP at /home/rohit/asr_simulator_data/glove
+Downloading pre-trained GloVe Vectors (840B 300d vectors trained on Common Crawl) to /home/rohit/asr_simulator_data/glove
+100% [....................................................................] 2176768927 / 2176768927
+Unzipping /home/rohit/asr_simulator_data/glove/glove.840B.300d.zip
+Deleting /home/rohit/asr_simulator_data/glove/glove.840B.300d.zip
+Generating and saving GloVe gensim model to /home/rohit/asr_simulator_data/models/glove, this may take several minutes.
+Loading GloVe vector gensim model from /home/rohit/asr_simulator_data/models/glove.
+Downloaded arpabet2hayes binary file for Hayes feature matrix to /home/rohit/asr_simulator_data
+Downloading CMU Pronouncing Dictionary (ARPABET) to /home/rohit/asr_simulator_data
+100% [..........................................................................] 3230976 / 3230976Loaded CMU Pronouncing Dictionary with ARPABET transcriptions for 133012 English words and feature matrix by Hayes.
+Computing phonological edit distances for all similar words to unique words in /home/rohit/Desktop/test.txt
+This may take a while...
+100% [###############################################################################################################################] Time:  0:00:47 Completed 42/42
+Done!
+Pickle file saved at /home/rohit/asr_simulator_data/models/test_glove_hayes_phono_dist.pkl
+Saved word substitution DataFrame pickle file at /home/rohit/asr_simulator_data/models/test_word_substitution_df.pkl.
+Corrupted /home/rohit/Desktop/test.txt with a WER of 34.699999999999996% and saved the output as /home/rohit/Desktop/corrupted_test.txt
 ```

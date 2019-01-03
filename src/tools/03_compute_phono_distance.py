@@ -53,7 +53,7 @@ def find_distances(corpus, phono_dict, features, model, use_stoplist=False, n=10
     word_tuples = []
 
     widgets = [progressbar.Percentage(), ' ', progressbar.Bar(marker='#', left='[', right=']'),
-               ' ', progressbar.ETA(), ' ', progressbar.Counter(format='%(value)d / %(max_value)d')]
+               ' ', progressbar.ETA(), ' ', progressbar.Counter(format='Completed %(value)d/%(max_value)d')]
 
     pbar = progressbar.ProgressBar(widgets=widgets, maxval=len(set_of_unique_tokens))
     pbar.start()

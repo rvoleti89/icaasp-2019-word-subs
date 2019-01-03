@@ -15,7 +15,8 @@ def load_glove_model(path, gensim_model_path=os.path.expanduser('~/asr_simulator
     url = 'http://nlp.stanford.edu/data/glove.840B.300d.zip'
     if not Path(path).is_dir():
         os.makedirs(path)
-        print(f'Creating directory for glove model at {path}')
+        print(f'Creating directory for downloaded pre-trained '
+              f'GloVe vectors from Stanford NLP at {path}')
 
     gensim_model_abspath = os.path.abspath(gensim_model_path)
     if not Path(os.path.join(gensim_model_abspath, 'glove')).is_file():
