@@ -65,7 +65,7 @@ The following example takes a text file (*text.txt*), corrupts it with a WER of 
 corrupt_text_file.py -f ~/Desktop/test.txt -e 0.347
 ```
 Output:
-```bash
+```angular2
 Creating directory for saving gensim model for GloVe vectors to /home/rohit/asr_simulator_data/models
 Creating directory for downloaded pre-trained GloVe vectors from Stanford NLP at /home/rohit/asr_simulator_data/glove
 Downloading pre-trained GloVe Vectors (840B 300d vectors trained on Common Crawl) to /home/rohit/asr_simulator_data/glove
