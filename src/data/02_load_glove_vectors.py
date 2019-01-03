@@ -6,7 +6,7 @@ import zipfile
 from gensim.scripts.glove2word2vec import glove2word2vec
 
 
-def load_glove_model(path, gensim_model_path='../models/glove'):
+def load_glove_model(path, gensim_model_path=os.path.expanduser('~/asr_simulator_data/models')):
     """
     :param path: folder to which to download GloVe model from Stanford NLP
     :param gensim_model_path: path which contains gensim model for pre-trained GloVe vectors
@@ -29,15 +29,20 @@ def load_glove_model(path, gensim_model_path='../models/glove'):
 
             print(f'Deleting {zip_file}')
             os.remove(zip_file)
-        print(f'Generating and saving GloVe gensim model at {gensim_model_abspath}, this may take several minutes.')
+        print(f'Generating and saving GloVe gensim model at {gensim_model_abspath}/glove, this may take several minutes.')
         tmp_file = "/tmp/glove.840B.300d.w2v.txt"
         glove2word2vec(os.path.join(path, 'glove.840B.300d.txt'), tmp_file)
         glove = gensim.models.KeyedVectors.load_word2vec_format(tmp_file)
-        glove.save(gensim_model_path)
-        print(f'Loading GloVe vector gensim model from {gensim_model_abspath}.')
+        try:
+            glove.save(os.path.join(gensim_model_abspath, 'glove'))
+        except OSError as e:
+            print(f'Creating directory for gensim GloVe model at {gensim_model_abspath}')
+            os.makedirs(gensim_model_abspath)
+            glove.save(os.path.join(gensim_model_abspath, 'glove'))
+        print(f'Loading GloVe vector gensim model from {gensim_model_abspath}/glove.')
         os.remove(tmp_file)
     else:
-        print(f'GloVe gensim KeyedVectors model exists! Loading model from {gensim_model_abspath}.')
+        print(f'GloVe gensim KeyedVectors model exists! Loading model from {gensim_model_abspath}/glove.')
         glove = gensim.models.KeyedVectors.load(gensim_model_path)
     return glove
 

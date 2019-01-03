@@ -1,4 +1,3 @@
-import src.models
 import importlib
 import argparse
 import pickle
@@ -7,7 +6,7 @@ from pathlib import Path
 from corpustools.corpus import io
 
 # Path to glove vectors txt file from Stanford NLP, creates this directory if not specified
-GLOVE_PATH = os.path.expanduser('~/asr_simulator_data/glove')
+DATA_PATH = os.path.expanduser('~/asr_simulator_data')
 
 load_dict = importlib.import_module('.data.01_load_cmu_and_features', 'src')
 load_glove = importlib.import_module('.data.02_load_glove_vectors', 'src')
@@ -26,12 +25,9 @@ if __name__ == '__main__':
                                                                               'the pickle file for the confusion'
                                                                               'word substitution DataFrame for a new'
                                                                               'corpus.')
-    parser.add_argument('--glove', dest='glove_path', default=GLOVE_PATH, type=str, help='Directory which contains '
-                                                                                         'the GloVe vectors txt file '
-                                                                                         'from Stanford NLP. Default '
-                                                                                         'will be created and file '
-                                                                                         'will be downloaded if it'
-                                                                                         'does not exist.')
+    parser.add_argument('--glove', dest='glove_path', default=os.path.join(DATA_PATH, 'glove'), type=str,
+                        help='Directory which contains the GloVe vectors txt file from Stanford NLP. '
+                             'Default will be created and file will be downloaded if it does not exist')
 
     args = parser.parse_args()
     corpus_file = os.path.expanduser(args.text_file)
@@ -48,8 +44,8 @@ if __name__ == '__main__':
     with open(corpus_file, 'r') as f:
         corpus = f.readlines()
 
-    # Indicate directory where models are stored
-    models_path = src.models.__path__[0]
+    # Indicate directory where models and other data are stored
+    models_path = os.path.join(DATA_PATH, 'models')
 
     # Check if probs DataFrame pickle file already exists, if not, go through steps to generate it and load it
     if not Path(os.path.join(models_path, f'{corpus_file_no_ext}_word_substitution_df.pkl')).is_file() or redo:
@@ -58,15 +54,14 @@ if __name__ == '__main__':
         # 3. dict.pkl containing features and cmu_dictionary
 
         if not Path(os.path.join(models_path, f'{corpus_file_no_ext}_glove_hayes_phono_dist.pkl')).is_file():
-            if not Path(glove_path).is_dir():
-                print(f'Creating directory for GloVe model at {glove_path} and saving gensim model for GloVe'
-                      f' vectors to {models_path}')
-                os.makedirs(glove_path)
-            glove = load_glove.load_glove_model(glove_path, os.path.join(models_path, 'glove'))
+            if not Path(models_path).is_dir():
+                print(f'Creating directory for saving gensim model for GloVe vectors to {models_path}')
+                os.makedirs(models_path)
+            glove = load_glove.load_glove_model(glove_path, models_path)
 
             # Check if dict.pkl exists, create and save if not
             if not Path(os.path.join(models_path, 'dict.pkl')).is_file():
-                data_path = os.path.expanduser('~/asr_simulator_data/')
+                data_path = DATA_PATH
 
                 # Check if arpabet2hayes feature vector binary exists, download, and load
                 if not Path(os.path.join(data_path, 'arpabet2hayes')).is_file():
