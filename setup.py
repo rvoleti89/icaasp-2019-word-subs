@@ -11,6 +11,7 @@ setup(name='asr_error_simulator',
       license='BSD',
       packages=['src', 'src.data', 'src.tools', 'src.models'],
       install_requires=[
+          'numpy',
           'pandas',
           'gensim',
           'nltk',
