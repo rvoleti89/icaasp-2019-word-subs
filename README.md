@@ -6,6 +6,8 @@ The simulator considers both semantic information (via [GloVe word embeddings](h
 
 **Note**: Currently this works using the phonological corpus tools package v1.3.0, the latest 1.4.0 seems to have an issue. Will update if this changes.
 
+**Note**: Currently, this project is compatible with Python 3.6.6 and above, but **NOT** Python 3.7 (some numpy issue). Will update if this changes as well.
+
 The method is described in our [paper](https://arxiv.org/abs/1811.07021), currently under review for ICASSP-2019.
 
 Project Organization

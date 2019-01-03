@@ -20,5 +20,5 @@ setup(name='asr_error_simulator',
           'corpustools @ https://github.com/PhonologicalCorpusTools/CorpusTools/archive/v1.3.0.zip'
       ],
       scripts=['src/corrupt_text_file.py'],
-      python_requires='>=3.6.6',
+      python_requires='>=3.6.6, <=3.7',
       zip_safe=False)
