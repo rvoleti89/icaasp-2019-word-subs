@@ -35,6 +35,9 @@ if __name__ == '__main__':
     corpus_file = os.path.expanduser(args.text_file)
     if args.output_loc is not None:
         output_dir = os.path.expanduser(args.output_loc)
+        if not Path(output_dir).is_dir():
+            print(f'Creating directory for saving corrupted text at {output_dir}')
+            os.makedirs(output_dir)
     else:
         output_dir = os.path.dirname(corpus_file)
     corpus_file_no_ext = corpus_file.split('/')[-1].split('.')[0]
