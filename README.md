@@ -39,7 +39,7 @@ Project Organization
 ##### Option 1: Install *pip* package
 This repository can be pip installed with the following command:
 ```bash
-pip install git+https://github.com/rvoleti89/asr_error_simulator.git@master
+pip install git+https://github.com/rvoleti89/icaasp-2019-word-subs.git@master
 ```
 ##### Option 2: Clone repository
 Clone the repository, cd into the directory, and install with *pip*:
